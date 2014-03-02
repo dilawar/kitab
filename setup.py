@@ -11,7 +11,7 @@ setup(
     description="A fast note-taking app for the UNIX terminal",
     long_description=open("README.rst").read(),
     install_requires=[
-        "urwid==1.1.1",
-        "chardet==2.1.1",
+        "urwid==1.2.0",
+        "chardet==2.2.1",
         ]
 )
