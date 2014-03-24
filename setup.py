@@ -1,14 +1,13 @@
 from setuptools import setup
 
 setup(
-    name="terminal_velocity",
-    version="0.1a7",
-    author="Sean Hammond",
-    packages=["terminal_velocity"],
-    scripts=["bin/terminal_velocity"],
-    url="http://seanh.github.com/terminal_velocity/",
+    name="kitab",
+    version="0.1.0",
+    author="Sean Hammond, Dilawar Singh",
+    packages=["kitab"],
+    scripts=["bin/kitab"],
     license="GNU General Public License, Version 3",
-    description="A fast note-taking app for the UNIX terminal",
+    description="A fast note-taking app for the UNIX terminal.",
     long_description=open("README.rst").read(),
     install_requires=[
         "urwid==1.2.0",
