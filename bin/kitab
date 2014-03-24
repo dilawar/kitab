@@ -14,18 +14,19 @@ import terminal_velocity.urwid_ui as urwid_ui
 
 def initKitab(args):
     logging.debug("Initializing kitab")
-    noteDir = args.notes_dir
+    noteDir = os.path.expanduser(args.notes_dir)
     noteRepo = args.notes_repo
+    print noteDir, noteRepo
     # If noteRepo is not given then use noteDir as local repository
     if not os.path.isdir(noteDir):
         # Directory is not found. Create and initialize 
         if noteRepo:
             cmd = ["git", "clone", noteRepo, noteDir]
+            print("Running: {}".format(" ".join(cmd)))
             p = subprocess.check_call(cmd)
+            assert os.path.isdir(noteDir)
         else:
-            logging.error("Provide a valid git repo for notes. Given: {}".format(
-                noteRepo)
-                )
+            logging.error("Not a valid repo. Given: {}".format(noteRepo))
             raise UserWarning("Incomplete implementation")
     else:
         # Directory exists, Change into it and do a git pull
@@ -89,7 +90,7 @@ the default default will be used"""
         help="debug logging on or off (default: off)")
 
     parser.add_argument("-l", "--log-file", dest="log_file", action="store",
-        default=defaults.get("log_file", "~/.tvlog"),
+        default=defaults.get("log_file", "~/.kitablog"),
         help="the file to log to (default: %(default)s)")
 
     parser.add_argument("-p", "--print-config", dest="print_config",
@@ -97,7 +98,7 @@ the default default will be used"""
             help="print your configuration settings then exit")
 
     parser.add_argument("notes_dir", action="store", nargs="?",
-        default=defaults.get("notes_dir", "~/Notes"),
+        default=os.path.expanduser(defaults.get("notes_dir", "~/Notes")),
         help="the notes directory to use (default: %(default)s)")
 
     parser.add_argument("notes_repo", action="store", nargs="?",
@@ -105,6 +106,7 @@ the default default will be used"""
         help="the directory where notes are archived using git (default: %(default)s)")
 
     args = parser.parse_args()
+    args.notes_dir = os.path.expanduser(args.notes_dir)
 
     extensions = []
     for extension in args.extensions.split(","):
@@ -112,7 +114,7 @@ the default default will be used"""
     args.extensions = extensions
 
     if args.print_config:
-        print args
+        print(args)
         sys.exit()
 
     logger = logging.getLogger("kitab")
@@ -128,9 +130,8 @@ the default default will be used"""
         fh.setLevel(logging.WARNING)
     logger.addHandler(fh)
     sh = logging.StreamHandler(sys.stdout)
-    sh.setLevel(logging.CRITICAL)
+    sh.setLevel(logging.INFO)
     logger.addHandler(sh)
-
     logger.debug(args)
 
     try:
